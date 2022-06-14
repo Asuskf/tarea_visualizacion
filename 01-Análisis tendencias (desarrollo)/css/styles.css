@@ -14,3 +14,14 @@
     stroke-width: 5;
     stroke: #b2967d;
 }
+
+.axis{
+    font-size: 16pt;
+
+}
+
+.titulo{
+    font-size: 18px;
+    font-weight: bold;
+    text-anchor: middle;
+}
