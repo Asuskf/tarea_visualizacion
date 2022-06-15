@@ -27,6 +27,7 @@ const load = async(seleccion) =>{
     let list_datos = []
     g.selectAll("text").remove();
     d3.selectAll("g.axis").remove();
+    
     const data = await d3.json("data/las_cifras_del_crimen_en_españa.json")
     datos = data.Respuesta.Datos.Metricas[0].Datos
     // Opciones de crimenes
@@ -81,7 +82,7 @@ const load = async(seleccion) =>{
     .attr('x', (d) => x(xAccessor(d)) + x.bandwidth() / 2)
     .attr('y', (d) =>  y(yAccessor(d)))
     .text(yAccessor)
-    
+
     // Titulo del gráfico
     if (seleccion == 'Total'){
         g.append('text').attr("x", ancho/2).attr("y", -15).classed("titulo", true).text(`${seleccion} de crimenes por año`)
