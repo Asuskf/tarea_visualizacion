@@ -18,67 +18,24 @@ const svg = graf.append("svg").attr('width', anchoTotal).attr('height', altoTota
 const layer = svg.append('g').attr('transform', `translate(${margins.left}, ${margins.top})`)
 
 layer.append('rect').attr('height', alto).attr('width', ancho).attr('fill', '#fefae0')
-// Titulos
+// SVG donde se van a dibujar los datos
 const g = svg.append('g').attr('transform', `translate(${margins.left}, ${margins.top})`)
-
+    
 tipoCrimenList = []
-let list_datos = []
+
 const load = async(seleccion) =>{
+    let list_datos = []
+    g.selectAll("text").remove();
+    d3.selectAll("g.axis").remove();
     const data = await d3.json("data/las_cifras_del_crimen_en_españa.json")
     datos = data.Respuesta.Datos.Metricas[0].Datos
-    //
+    // Opciones de crimenes
     datos.forEach((element) => {
         if (!tipoCrimenList.includes(element.Parametro)){
             tipoCrimenList.push(element.Parametro);
         }
     });
-    
-    if (!seleccion){
-        seleccion = tipoCrimenList[0]   
-    }
-    
-    datos.forEach((element) => {
-        if (element.Parametro == seleccion){
-            list_datos.push(element);
-        }
-    });
-    const yAccessor = (d) => d.Valor
-    const xAccessor = (d) => d.Agno
-    
-    const y = d3.scaleLinear().domain([0, d3.max(list_datos, yAccessor)]).range([alto,0])
-    const x = d3.scaleBand().domain(d3.map(list_datos, xAccessor)).range([0, ancho ]).paddingOuter(0.2).paddingInner(0.1)
-    
-    const rect = g
-    // Gráfico
-    .selectAll('rect')
-    .data(list_datos)
-    .enter()
-    .append('rect')
-    .attr('x', (d) => x(xAccessor(d)))
-    .attr('y', (d) =>  y(yAccessor(d)))
-    .attr('width', x.bandwidth())
-    .attr('height', (d) => alto - y(yAccessor(d)))
-    .attr('fill', "#faedcd")
-
-    const ct = g
-    // Gráfico
-    .selectAll('text')
-    .data(list_datos)
-    .enter()
-    .append('text')
-    .attr('x', (d) => x(xAccessor(d)) + x.bandwidth() / 2)
-    .attr('y', (d) =>  y(yAccessor(d)))
-    .text(yAccessor)
-
-    g.append('text').attr("x", ancho/2).attr("y", -15).classed("titulo", true).text(`${seleccion}`)
-
-     // Ejes
-     const xAxis = d3.axisBottom(x)
-     const yAxis = d3.axisLeft(y).ticks(6)
- 
-     const xAxisGroup = g.append('g').classed("axis", true).call(xAxis).attr("transform", `translate(0, ${alto} )`)
-     const yAxisGroup = g.append('g').classed("axis", true).call(yAxis)
- 
+    // Llenar con las opciones de crimenes
     tipoCrimen
         .selectAll('option')
         .data(tipoCrimenList)
@@ -86,16 +43,57 @@ const load = async(seleccion) =>{
         .append('option')
         .attr('value', (d) => d)
         .text(d => d)
-    
-}
+    // Tomar el tipo de crimen seleccionado por el usuario
+    seleccion = tipoCrimen.node().value
+    // Filtro de datos por el tipo de crimen seleccionado
+    datos.forEach((element) => {
+        if (element.Parametro == seleccion){
+            list_datos.push(element);
+        }
+    });
 
+    const yAccessor = (d) => d.Valor
+    const xAccessor = (d) => d.Agno
+    
+    const y = d3.scaleLinear().domain([0, d3.max(list_datos, yAccessor)]).range([alto,0])
+    const x = d3.scaleBand().domain(d3.map(list_datos, xAccessor)).range([0, ancho ]).paddingOuter(0.2).paddingInner(0.1)
+    const rect = g
+    // Barras
+    .selectAll('rect')
+    .data(list_datos)
+    rect
+    .enter()
+    .append('rect')
+    .merge(rect)
+    .attr('x', (d) => x(xAccessor(d)))
+    .attr('y', (d) =>  y(yAccessor(d)))
+    .attr('width', x.bandwidth())
+    .attr('height', (d) => alto - y(yAccessor(d)))
+    .attr('fill', "#faedcd")
+
+    const ct = g
+    // Etiquetas
+    .selectAll('text')
+    .data(list_datos)
+    ct
+    .enter()
+    .append('text')
+    .attr('x', (d) => x(xAccessor(d)) + x.bandwidth() / 2)
+    .attr('y', (d) =>  y(yAccessor(d)))
+    .text(yAccessor)
+    
+    // Titulo del gráfico
+    if (seleccion == 'Total'){
+        g.append('text').attr("x", ancho/2).attr("y", -15).classed("titulo", true).text(`${seleccion} de crimenes por año`)
+    }else{
+        g.append('text').attr("x", ancho/2).attr("y", -15).classed("titulo", true).text(`${seleccion} por año`)
+    }
+    
+     // Ejes
+    const xAxis = d3.axisBottom(x)
+    const yAxis = d3.axisLeft(y).ticks(6)
+    const xAxisGroup = g.append('g').classed("axis", true).call(xAxis).attr("transform", `translate(0, ${alto} )`)
+    const yAxisGroup = g.append('g').classed("axis", true).call(yAxis)
+}
 
 load()
-
-const modi = (delta) => {
-    tipo = tipoCrimen.node().value
-    g.selectAll("text").remove();
-    load(tipo)
-    
-}
-
