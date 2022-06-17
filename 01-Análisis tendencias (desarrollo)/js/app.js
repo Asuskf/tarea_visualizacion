@@ -62,8 +62,7 @@ const load = async(seleccion) =>{
     yearsIncidentes = d3.map(list_datos, xAccessor)
     anioMayorIncidentes = yearsIncidentes[d3.maxIndex(list_datos, yAccessor)]
     
-    mayorIncidentes.append("p").classed("titulo", true).text(`El año con mayor incidentes fue ${anioMayorIncidentes} con ${mayorNumberIncidentes} incidentes`);
-    totalIncidentes.append("p").classed("titulo", true).text(`Total de incidentes del tipo ${seleccion} reportados fue ${d3.sum(numberIncidentes)}`);
+    
     const y = d3.scaleLinear().domain([0, d3.max(list_datos, yAccessor)]).range([alto,0])
     const x = d3.scaleBand().domain(d3.map(list_datos, xAccessor)).range([0, ancho ]).paddingOuter(0.2).paddingInner(0.1)
     const rect = g
@@ -94,8 +93,10 @@ const load = async(seleccion) =>{
     // Titulo del gráfico
     if (seleccion == 'Total'){
         g.append('text').attr("x", ancho/2).attr("y", -15).classed("titulo", true).text(`${seleccion} de crimenes por año`)
+        totalIncidentes.append("p").classed("titulo", true).text(`Total de incidentes reportados fue ${d3.sum(numberIncidentes)}`);
     }else{
         g.append('text').attr("x", ancho/2).attr("y", -15).classed("titulo", true).text(`${seleccion} por año`)
+        totalIncidentes.append("p").classed("titulo", true).text(`Total de incidentes del tipo ${seleccion} reportados fue ${d3.sum(numberIncidentes)}`);
     }
     
      // Ejes
