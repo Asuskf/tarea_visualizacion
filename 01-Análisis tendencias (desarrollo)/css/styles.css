@@ -25,3 +25,19 @@
     font-weight: bold;
     text-anchor: middle;
 }
+.column {
+    float: center;
+    width: 50%;
+}
+  
+
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.row {
+    display: flex;
+}
+  

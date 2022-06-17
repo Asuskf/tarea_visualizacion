@@ -1,6 +1,7 @@
 const graf = d3.select("#graf")
 const tipoCrimen = d3.select("#tipoCrimen")
-
+const mayorIncidentes = d3.select("#mayorIncidentes")
+const totalIncidentes = d3.select("#totalIncidentes")
 const anchoTotal = +graf.style('width').slice(0, -2)
 const altoTotal = anchoTotal* 9 / 16
 
@@ -27,6 +28,7 @@ const load = async(seleccion) =>{
     let list_datos = []
     g.selectAll("text").remove();
     d3.selectAll("g.axis").remove();
+    d3.selectAll("p").remove();
     
     const data = await d3.json("data/las_cifras_del_crimen_en_españa.json")
     datos = data.Respuesta.Datos.Metricas[0].Datos
@@ -55,7 +57,13 @@ const load = async(seleccion) =>{
 
     const yAccessor = (d) => d.Valor
     const xAccessor = (d) => d.Agno
+    mayorNumberIncidentes = d3.max(list_datos, yAccessor)
+    numberIncidentes = d3.map(list_datos, yAccessor) 
+    yearsIncidentes = d3.map(list_datos, xAccessor)
+    anioMayorIncidentes = yearsIncidentes[d3.maxIndex(list_datos, yAccessor)]
     
+    mayorIncidentes.append("p").classed("titulo", true).text(`El año con mayor incidentes fue ${anioMayorIncidentes} con ${mayorNumberIncidentes} incidentes`);
+    totalIncidentes.append("p").classed("titulo", true).text(`Total de incidentes del tipo ${seleccion} reportados fue ${d3.sum(numberIncidentes)}`);
     const y = d3.scaleLinear().domain([0, d3.max(list_datos, yAccessor)]).range([alto,0])
     const x = d3.scaleBand().domain(d3.map(list_datos, xAccessor)).range([0, ancho ]).paddingOuter(0.2).paddingInner(0.1)
     const rect = g
