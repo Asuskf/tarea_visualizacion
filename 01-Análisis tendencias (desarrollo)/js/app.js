@@ -3,7 +3,7 @@ const tipoCrimen = d3.select("#tipoCrimen")
 const mayorIncidentes = d3.select("#mayorIncidentes")
 const totalIncidentes = d3.select("#totalIncidentes")
 const anchoTotal = +graf.style('width').slice(0, -2)
-const altoTotal = anchoTotal* 9 / 16
+const altoTotal = anchoTotal* 9 / 10
 
 const margins = {
     top: 60,
@@ -18,7 +18,7 @@ const alto = altoTotal - margins.top - margins.button
 const svg = graf.append("svg").attr('width', anchoTotal).attr('height', altoTotal).attr('class',"graf")
 const layer = svg.append('g').attr('transform', `translate(${margins.left}, ${margins.top})`)
 
-layer.append('rect').attr('height', alto).attr('width', ancho).attr('fill', '#fefae0')
+layer.append('rect').attr('height', alto).attr('width', ancho).attr('fill', '#8eabe9')
 // SVG donde se van a dibujar los datos
 const g = svg.append('g').attr('transform', `translate(${margins.left}, ${margins.top})`)
     
