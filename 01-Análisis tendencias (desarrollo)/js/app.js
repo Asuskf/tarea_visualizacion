@@ -3,7 +3,7 @@ const tipoCrimen = d3.select("#tipoCrimen")
 const mayorIncidentes = d3.select("#mayorIncidentes")
 const totalIncidentes = d3.select("#totalIncidentes")
 const anchoTotal = +graf.style('width').slice(0, -2)
-const altoTotal = anchoTotal* 9 / 10
+const altoTotal = anchoTotal* 9 / 16
 
 const margins = {
     top: 60,
