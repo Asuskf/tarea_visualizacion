@@ -4,6 +4,7 @@ const mayorIncidentes = d3.select("#mayorIncidentes")
 const totalIncidentes = d3.select("#totalIncidentes")
 const anchoTotal = +graf.style('width').slice(0, -2)
 const altoTotal = anchoTotal* 9 / 16
+const formatComma = d3.format(",")
 
 const margins = {
     top: 60,
@@ -90,13 +91,17 @@ const load = async(seleccion) =>{
     .attr('y', (d) =>  y(yAccessor(d)))
     .text(yAccessor)
 
+    
+
+   
+
     // Titulo del gráfico
     if (seleccion == 'Total'){
         g.append('text').attr("x", ancho/2).attr("y", -15).classed("titulo", true).text(`${seleccion} de crimenes por año`)
-        totalIncidentes.append("p").classed("titulo", true).text(`Total de incidentes reportados fue ${d3.sum(numberIncidentes)}`);
+        totalIncidentes.append("p").classed("titulo", true).text(`Total de incidentes reportados fue ${formatComma(d3.sum(numberIncidentes))}`);
     }else{
         g.append('text').attr("x", ancho/2).attr("y", -15).classed("titulo", true).text(`${seleccion} por año`)
-        totalIncidentes.append("p").classed("titulo", true).text(`Total de incidentes del tipo ${seleccion} reportados fue ${d3.sum(numberIncidentes)}`);
+        totalIncidentes.append("p").classed("titulo", true).text(`Total de incidentes del tipo ${seleccion} reportados fue ${formatComma(d3.sum(numberIncidentes))}`);
     }
     
      // Ejes
