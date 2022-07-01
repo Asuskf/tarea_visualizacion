@@ -56,12 +56,16 @@ const load = async(seleccion) =>{
         }
     });
 
+
     const yAccessor = (d) => d.Valor
+    //Variable con comma
+    const yAccessor2 = (d) => formatComma(d.Valor)
     const xAccessor = (d) => d.Agno
     mayorNumberIncidentes = d3.max(list_datos, yAccessor)
     numberIncidentes = d3.map(list_datos, yAccessor) 
     yearsIncidentes = d3.map(list_datos, xAccessor)
     anioMayorIncidentes = yearsIncidentes[d3.maxIndex(list_datos, yAccessor)]
+
     
     
     const y = d3.scaleLinear().domain([0, d3.max(list_datos, yAccessor)]).range([alto,0])
@@ -78,8 +82,15 @@ const load = async(seleccion) =>{
     .attr('y', (d) =>  y(yAccessor(d)))
     .attr('width', x.bandwidth())
     .attr('height', (d) => alto - y(yAccessor(d)))
-    .attr('fill', "#faedcd")
-
+    .attr('fill', function(d){
+        if(yAccessor(d)==mayorNumberIncidentes){
+            return "#FA8D76"
+        }
+        else{
+            return "#faedcd"
+        }
+        
+    })
     const ct = g
     // Etiquetas
     .selectAll('text')
@@ -87,10 +98,10 @@ const load = async(seleccion) =>{
     ct
     .enter()
     .append('text')
-    .attr('x', (d) => x(xAccessor(d)) + x.bandwidth() / 2)
-    .attr('y', (d) =>  y(yAccessor(d)))
-    .text(yAccessor)
-
+    .attr('x', (d) => x(xAccessor(d)) + x.bandwidth() / 2-5)
+    .attr('y', (d) =>   y(yAccessor(d)/2)) 
+    .text(yAccessor2)
+    
     
 
    
@@ -107,8 +118,20 @@ const load = async(seleccion) =>{
      // Ejes
     const xAxis = d3.axisBottom(x)
     const yAxis = d3.axisLeft(y).ticks(6)
-    const xAxisGroup = g.append('g').classed("axis", true).call(xAxis).attr("transform", `translate(0, ${alto} )`)
+   const xAxisGroup = g.append('g').classed("axis", true).call(xAxis).attr("transform", `translate(0, ${alto} )`)
+ //   const xAxisGroup = g.append('g').classed("axis", true).call(xAxis).attr("transform", `translate(0, ${alto} )`).attr("text-anchor", "end").text("anioo");
     const yAxisGroup = g.append('g').classed("axis", true).call(yAxis)
+    //Tamaño de los ticks del eje y, se varia por el espacio para el titulo del eje 
+    if(mayorNumberIncidentes>=10000){
+        yAxisGroup.selectAll(".tick text").attr("font-size","17")
+    }
+   
+
+    // Titulos de Eje
+    g.append('text').attr("text-anchor", "end").attr("x", ancho/2).attr("y",altoTotal - margins.button).attr("font-size","24").text("Año");
+    g.append('text').attr("text-anchor", "end").attr("transform", "rotate(-90)").attr("x",-alto/2).attr("y",-margins.left+20).attr("font-size","22").text("Incidencias");
+
+
 }
 
 load()
