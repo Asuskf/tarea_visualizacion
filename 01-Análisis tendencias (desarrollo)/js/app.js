@@ -19,7 +19,7 @@ const alto = altoTotal - margins.top - margins.button
 const svg = graf.append("svg").attr('width', anchoTotal).attr('height', altoTotal).attr('class',"graf")
 const layer = svg.append('g').attr('transform', `translate(${margins.left}, ${margins.top})`)
 
-layer.append('rect').attr('height', alto).attr('width', ancho).attr('fill', '#8eabe9')
+layer.append('rect').attr('height', alto).attr('width', ancho).attr('fill', '#f0f2f7')
 // SVG donde se van a dibujar los datos
 const g = svg.append('g').attr('transform', `translate(${margins.left}, ${margins.top})`)
     
@@ -27,6 +27,7 @@ tipoCrimenList = []
 
 const load = async(seleccion) =>{
     let list_datos = []
+    let colorBarras ="";
     g.selectAll("text").remove();
     d3.selectAll("g.axis").remove();
     d3.selectAll("p").remove();
@@ -61,11 +62,22 @@ const load = async(seleccion) =>{
     //Variable con comma
     const yAccessor2 = (d) => formatComma(d.Valor)
     const xAccessor = (d) => d.Agno
+
+    function onMouseOver(d, i) {
+        d3.select(this).attr("fill", "#7b6dbf"); 
+    }
     mayorNumberIncidentes = d3.max(list_datos, yAccessor)
     numberIncidentes = d3.map(list_datos, yAccessor) 
     yearsIncidentes = d3.map(list_datos, xAccessor)
     anioMayorIncidentes = yearsIncidentes[d3.maxIndex(list_datos, yAccessor)]
-
+    colorBarras=function(d){
+        if(yAccessor(d)==mayorNumberIncidentes){
+            return "#1526A4"
+        }
+        else{
+            return "#4B94D9"
+        }
+    }
     
     
     const y = d3.scaleLinear().domain([0, d3.max(list_datos, yAccessor)]).range([alto,0])
@@ -82,15 +94,11 @@ const load = async(seleccion) =>{
     .attr('y', (d) =>  y(yAccessor(d)))
     .attr('width', x.bandwidth())
     .attr('height', (d) => alto - y(yAccessor(d)))
-    .attr('fill', function(d){
-        if(yAccessor(d)==mayorNumberIncidentes){
-            return "#FA8D76"
-        }
-        else{
-            return "#faedcd"
-        }
-        
-    })
+    .attr('fill', colorBarras)
+    .attr('opacity', 0.90)
+  //  .on("mouseover", function() { d3.select(this).attr("fill", "#7b6dbf");  })
+    .on("mouseover", onMouseOver)
+    .on("mouseout", function() { d3.select(this) .attr('fill',colorBarras) ; });
     const ct = g
     // Etiquetas
     .selectAll('text')
@@ -98,8 +106,15 @@ const load = async(seleccion) =>{
     ct
     .enter()
     .append('text')
-    .attr('x', (d) => x(xAccessor(d)) + x.bandwidth() / 2-5)
+    .classed("leyendas", true)
+    .attr("text-anchor", "middle")
+    .attr('x', (d) => x(xAccessor(d)) + x.bandwidth()/2)
     .attr('y', (d) =>   y(yAccessor(d)/2)) 
+    .style('fill', function(d){
+        if(yAccessor(d)==mayorNumberIncidentes){
+            return "#f0f2f7"
+        }        
+    })
     .text(yAccessor2)
     
     

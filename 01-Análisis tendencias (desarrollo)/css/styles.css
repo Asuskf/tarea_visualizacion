@@ -1,19 +1,21 @@
 .graf {
-    background-color: #8eabe9;
-    border: 1px solid #e09191;
+    background-color: #f0f2f7;
+    border: 1.5px solid #353c40;
+    border-radius: 10px;
 }
 
 .barras {
-    fill: #e7d8c9;
+    fill: #899bc9;
     stroke-width: 5;
     stroke: #b2967d;
+    opacity: 0.3;
 }
 
-.barras {
+/* .barras {
     fill: #e7d8c9;
     stroke-width: 5;
     stroke: #b2967d;
-}
+} */
 
 .axis{
     font-size: 16pt;
@@ -42,3 +44,8 @@
     display: flex;
 }
   
+.leyendas{
+    font-size: 12pt;
+    font-weight: bold;
+    text-align:center;
+}
